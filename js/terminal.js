@@ -1,19 +1,12 @@
 var PROGAMS = {
 
   help: function(...a) {
-    this.printa("Type commands to get details of my resume, commands available<br /><ul><li>help :&ensp; get list of available commands</li><li>sayhello [name] :&ensp; say hello to [name]</li><li>clear :&ensp; Clear terminal</li></ul>");
+
+    this.printa({"command": ["help", "sayhello [name]", "clear"], "titi": ["get list commands", "say hello to user", "clear terminal"]});
   },
 
   sayhello: function(...a) {
     this.printa("Hello "+a[0]);
-  },
-
-  arrtab: function(...a) {
-    this.printa({"toto": ["a", "b", "c"], "titi": ["d", "e", "f"]});
-  },
-
-  arrrow: function(...a) {
-    //this.printa(["toto", "titi", "super very long text", 12], {"direction": "row", "delimiter": "*"});
   },
 
   clear: function(...a) {
@@ -295,7 +288,6 @@ var PROGAMS = {
     this.commands_list.push(command_raw);
     this.last_command_retrieved = -1;
   }
-
 
   //print answer line
   Terminal.prototype.printa = function(a){
