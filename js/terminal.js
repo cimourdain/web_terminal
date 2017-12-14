@@ -308,6 +308,7 @@ var PROGAMS = {
     }
   }
 
+  //get array delimiter in params
   Terminal.prototype.getArrayDelimiter = function(params){
     if("delimiter" in params)
       return params["delimiter"];
@@ -315,6 +316,7 @@ var PROGAMS = {
       return "|";
   }
 
+  //get array line char in params
   Terminal.prototype.getArrayLineChar = function(params){
     if("line_char" in params)
       return params["line_char"];
@@ -322,6 +324,7 @@ var PROGAMS = {
       return '-';
   }
 
+  //get array direction in params
   Terminal.prototype.getArrayDirection = function(params){
     if("direction" in params)
       return params["direction"];
@@ -329,6 +332,7 @@ var PROGAMS = {
       return "col";
   }
 
+  //get print array as answer
   Terminal.prototype.printArray = function (a, params = {}){
     var max = this.longest(a);
     var delimiter = this.getArrayDelimiter(params);
