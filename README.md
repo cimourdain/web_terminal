@@ -2,7 +2,7 @@
 JQuery plugin to insert terminal in webpage
 
 
-#Usage
+# Usage
 
 ## define your pages programs
 
@@ -11,7 +11,6 @@ In the js/terminal.js define your programs as functions in the PROGAMS array.
 The following functions can be used:
  * this.printa([str]); Print string as program answer
  * this.clear_terminal() : clear terminal
-
 
 
 ## Insert in page
