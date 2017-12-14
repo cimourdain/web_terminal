@@ -8,12 +8,12 @@ var PROGAMS = {
     this.printa("Hello "+a[0]);
   },
 
-  arrcol: function(...a) {
-    this.printa(["toto", "titi", "super very long text", 12]);
+  arrtab: function(...a) {
+    this.printa({"toto": ["a", "b", "c"], "titi": ["d", "e", "f"]});
   },
 
   arrrow: function(...a) {
-    this.printa(["toto", "titi", "super very long text", 12], {"direction": "row", "delimiter": "*"});
+    //this.printa(["toto", "titi", "super very long text", 12], {"direction": "row", "delimiter": "*"});
   },
 
   clear: function(...a) {
@@ -287,8 +287,6 @@ var PROGAMS = {
     }
 
     this.addCommandToList(command_raw);
-
-
     this.newPrompt();
   }
 
@@ -300,65 +298,43 @@ var PROGAMS = {
 
 
   //print answer line
-  Terminal.prototype.printa = function(a, params = {}){
+  Terminal.prototype.printa = function(a){
     if (typeof a === 'string' || a instanceof String )
       this.addAnswerLine(a);
-    else if(Array.isArray(a)){
-      this.addAnswerLine(this.printArray(a, params));
+    else if(this.isObject(a)){
+      this.addAnswerLine(this.makeTableHTML(a));
     }
   }
 
-  //get array delimiter in params
-  Terminal.prototype.getArrayDelimiter = function(params){
-    if("delimiter" in params)
-      return params["delimiter"];
-    else
-      return "|";
-  }
-
-  //get array line char in params
-  Terminal.prototype.getArrayLineChar = function(params){
-    if("line_char" in params)
-      return params["line_char"];
-    else
-      return '-';
-  }
-
-  //get array direction in params
-  Terminal.prototype.getArrayDirection = function(params){
-    if("direction" in params)
-      return params["direction"];
-    else
-      return "col";
-  }
-
-  //get print array as answer
-  Terminal.prototype.printArray = function (a, params = {}){
-    var max = this.longest(a);
-    var delimiter = this.getArrayDelimiter(params);
-    var line_char = this.getArrayLineChar(params);
-    var direction = this.getArrayDirection(params);
-
-    if(direction == "col"){
-      var line = "&nbsp;"+Array(max+3).join(line_char) + "&nbsp;<br />";
-      var out = line;
-      a.forEach(function(e) {
-        fill = Array(max - e.length + 2).join("&nbsp;");
-        out += delimiter+" "+e+" "+fill+delimiter+"<br />";
-      });
-    }else{
-      var elts_size = this.array_elements_size(a, 4)-2;
-      console.log("size: "+elts_size);
-      var line = Array(elts_size).join(line_char) + "&nbsp;<br />";
-      var out = line+delimiter+"&nbsp;";
-      a.forEach(function(e) {
-        //fill = Array(max - e.length + 2).join("&nbsp;");
-        out += e+"&nbsp;"+delimiter+"&nbsp;";
-      });
+  Terminal.prototype.makeTableHTML = function(obj) {
+    ths = "<tr>";
+    var keys = Object.keys(obj);
+    for (var i = 0; i < keys.length; i++) {
+      ths += "<th>"+keys[i]+"</th>";
     }
-    out += "<br />"+line;
-    return out;
+    ths += "</tr>";
+
+    trs = "";
+
+    //get longest array size
+    var longest_size = 0;
+    for (key in obj) {
+      if(obj[key].length > longest_size)
+        longest_size = obj[key].length
+    }
+
+    //get table lines
+    for(var i = 0; i < longest_size; i++){
+      trs += "<tr>";
+      for (var j = 0; j < keys.length; j++) {
+        trs += "<td>"+obj[keys[j]][i]+"</td>";
+      }
+      trs += "</tr>"
+    }
+
+    return "<table>" + ths + trs + "</table>";
   }
+
 
   Terminal.prototype.addAnswerLine = function (s){
     $(this.tag+" #terminal_lines").append("<div class=\"answer\">"+s+"</div>");

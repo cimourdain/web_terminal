@@ -1,0 +1,90 @@
+$background-color: #000;
+$text-color-main: #fff;
+$cursor-color: $text-color-main;
+
+body{
+  background-color: $background-color;
+  color: $text-color-main;
+}
+
+#terminal{
+    //font-family: 'Source Code Pro', monospace;
+    font-family: "Lucida Console", Monaco, monospace;
+		font-weight: 200;
+		font-size: 20px;
+
+    #cursor {
+      color: $cursor-color;
+      -webkit-animation: 1s blink step-end infinite;
+      -moz-animation: 1s blink step-end infinite;
+      -ms-animation: 1s blink step-end infinite;
+      -o-animation: 1s blink step-end infinite;
+      animation: 1s blink step-end infinite;
+    }
+
+    li{
+      list-style-type: '-';
+    }
+
+    table {
+      border-collapse: collapse;
+      border: 0;
+      th{
+        background-color: #fff;
+        color: #000;
+        border: 1px dashed #000;
+      }
+      td{
+        border: 1px dashed #fff;
+      }
+      td, th{
+        padding: .5em;
+      }
+    }
+}
+
+
+@keyframes "blink" {
+  from, to {
+    color: transparent;
+  }
+  50% {
+    color: $text-color-main;
+  }
+}
+
+@-moz-keyframes blink {
+  from, to {
+    color: transparent;
+  }
+  50% {
+    color: $text-color-main;
+  }
+}
+
+@-webkit-keyframes "blink" {
+  from, to {
+    color: transparent;
+  }
+  50% {
+    color: $text-color-main;
+  }
+}
+
+@-ms-keyframes "blink" {
+  from, to {
+    color: transparent;
+  }
+  50% {
+    color: $text-color-main;
+  }
+}
+
+@-o-keyframes "blink" {
+  from, to {
+    color: transparent;
+  }
+  50% {
+    color: $background-color;
+  }
+}
