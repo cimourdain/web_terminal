@@ -1,11 +1,19 @@
 var PROGAMS = {
 
   help: function(...a) {
-    this.printa("Type commands to get details of my resume, commands available<br /><ul><li>help: get list of available commands</li><li>sayhello [name] : say hello to [name]</li><li>clear : Clear terminal</li></ul>");
+    this.printa("Type commands to get details of my resume, commands available<br /><ul><li>help :&ensp; get list of available commands</li><li>sayhello [name] :&ensp; say hello to [name]</li><li>clear :&ensp; Clear terminal</li></ul>");
   },
 
   sayhello: function(...a) {
     this.printa("Hello "+a[0]);
+  },
+
+  arrcol: function(...a) {
+    this.printa(["toto", "titi", "super very long text", 12]);
+  },
+
+  arrrow: function(...a) {
+    this.printa(["toto", "titi", "super very long text", 12], {"direction": "row", "delimiter": "*"});
   },
 
   clear: function(...a) {
@@ -27,7 +35,6 @@ var PROGAMS = {
       console.log("Impossible to instanciate new terminal");
     }
   }
-
 
   /****************
   *** INIT FUNC ***
@@ -81,6 +88,24 @@ var PROGAMS = {
     if(o !== null && typeof o === 'object')
       return true;
     return false;
+  }
+
+  //get greater length item in list
+  Terminal.prototype.longest = function(a){
+    var max = 0;
+    for(var i = 0; i < a.length; i++){
+      if(a[i].length > max)
+        max = a[i].length
+    }
+    return max;
+  }
+
+  //get sum of element size in array
+  Terminal.prototype.array_elements_size = function(a, padding = 0){
+    var size = 0;
+    for(var i = 0; i < a.length; i++)
+      size += a[i].toString().length + padding;
+    return size;
   }
 
   /*************
@@ -275,9 +300,64 @@ var PROGAMS = {
 
 
   //print answer line
-  Terminal.prototype.printa = function(a){
+  Terminal.prototype.printa = function(a, params = {}){
     if (typeof a === 'string' || a instanceof String )
-      $(this.tag+" #terminal_lines").append("<div class=\"answer\">"+a+"</div>");
+      this.addAnswerLine(a);
+    else if(Array.isArray(a)){
+      this.addAnswerLine(this.printArray(a, params));
+    }
+  }
+
+  Terminal.prototype.getArrayDelimiter = function(params){
+    if("delimiter" in params)
+      return params["delimiter"];
+    else
+      return "|";
+  }
+
+  Terminal.prototype.getArrayLineChar = function(params){
+    if("line_char" in params)
+      return params["line_char"];
+    else
+      return '-';
+  }
+
+  Terminal.prototype.getArrayDirection = function(params){
+    if("direction" in params)
+      return params["direction"];
+    else
+      return "col";
+  }
+
+  Terminal.prototype.printArray = function (a, params = {}){
+    var max = this.longest(a);
+    var delimiter = this.getArrayDelimiter(params);
+    var line_char = this.getArrayLineChar(params);
+    var direction = this.getArrayDirection(params);
+
+    if(direction == "col"){
+      var line = "&nbsp;"+Array(max+3).join(line_char) + "&nbsp;<br />";
+      var out = line;
+      a.forEach(function(e) {
+        fill = Array(max - e.length + 2).join("&nbsp;");
+        out += delimiter+" "+e+" "+fill+delimiter+"<br />";
+      });
+    }else{
+      var elts_size = this.array_elements_size(a, 4)-2;
+      console.log("size: "+elts_size);
+      var line = Array(elts_size).join(line_char) + "&nbsp;<br />";
+      var out = line+delimiter+"&nbsp;";
+      a.forEach(function(e) {
+        //fill = Array(max - e.length + 2).join("&nbsp;");
+        out += e+"&nbsp;"+delimiter+"&nbsp;";
+      });
+    }
+    out += "<br />"+line;
+    return out;
+  }
+
+  Terminal.prototype.addAnswerLine = function (s){
+    $(this.tag+" #terminal_lines").append("<div class=\"answer\">"+s+"</div>");
   }
 
   //crear terminal of all user lines && program answers
