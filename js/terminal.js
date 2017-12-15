@@ -254,36 +254,30 @@
   }
 
   //print answer line
-  Terminal.prototype.printa = function(a){
+  Terminal.prototype.printa = function(a, format = {}){
     if (typeof a === 'string' || a instanceof String )
       this.addAnswerLine(a);
     else if(this.isObject(a)){
-      this.addAnswerLine(this.makeTableHTML(a));
+      this.addAnswerLine(this.makeTableHTML(a, format = {}));
     }
   }
 
-  Terminal.prototype.makeTableHTML = function(obj) {
+  Terminal.prototype.makeTableHTML = function(obj, format) {
+    //headers
     ths = "<tr>";
-    var keys = Object.keys(obj);
-    for (var i = 0; i < keys.length; i++) {
-      ths += "<th>"+keys[i]+"</th>";
+    for (var i = 0; i < obj["headers"].length; i++) {
+      ths += "<th>"+obj["headers"][i]+"</th>";
     }
     ths += "</tr>";
-
+    delete obj["headers"];
+    //lines
     trs = "";
-
-    //get longest array size
-    var longest_size = 0;
-    for (key in obj) {
-      if(obj[key].length > longest_size)
-        longest_size = obj[key].length
-    }
-
     //get table lines
-    for(var i = 0; i < longest_size; i++){
-      trs += "<tr>";
-      for (var j = 0; j < keys.length; j++) {
-        trs += "<td>"+obj[keys[j]][i]+"</td>";
+    for(key in obj){
+      trs += "<tr><td>"+key+"</td>";
+
+      for (var j = 0; j < obj[key].length; j++) {
+        trs += "<td>"+obj[key][j]+"</td>";
       }
       trs += "</tr>"
     }

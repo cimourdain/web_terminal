@@ -1,7 +1,12 @@
 var PROGAMS = {
 
   help: function(...a) {
-    this.printa({"command": ["help", "sayhello [name]", "clear"], "description": ["get commands list", "say hello to user", "clear terminal"]});
+    this.printa({
+      "headers": ["command", "description"],
+      "help": ["get commands list"],
+      "sayhello [name]": ["say hello to [name]"],
+      "clear": ["clear terminal"]
+    });
   },
 
   sayhello: function(...a) {
