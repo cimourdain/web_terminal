@@ -4,6 +4,7 @@ var PROGAMS = {
     this.printa({
       "headers": ["command", "description"],
       "help": ["get commands list"],
+      "text": ["view text template"],
       "sayhello [name]": ["say hello to [name]"],
       "clear": ["clear terminal"]
     });
