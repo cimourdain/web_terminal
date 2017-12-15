@@ -1,21 +1,4 @@
-var PROGAMS = {
 
-  help: function(...a) {
-    this.printa({"command": ["help", "sayhello [name]", "clear"], "description": ["get commands list", "say hello to user", "clear terminal"]});
-  },
-
-  sayhello: function(...a) {
-    this.printa("Hello "+a[0]);
-  },
-
-  aboutme: function(...a) {
-    this.printa("aboutme");
-  },
-
-  clear: function(...a) {
-    this.clear_terminal();
-  }
-};
 
 /*********************************************************
  ******************* JQUERY PLUGIN ***********************
@@ -60,13 +43,10 @@ var PROGAMS = {
 
     //create keyup listener
     self = this;
-    $(document).on("keydown", function(e){
+    $(this.tag).on("keydown", function(e){
       console.log("keyup");
-      e.preventDefault();
-
       self.manageUserInput.call(self, e);
     });
-    //$('#terminal').focus();
   }
 
   /*************
@@ -205,37 +185,21 @@ var PROGAMS = {
 
   //function to manage user input key
   Terminal.prototype.manageUserInput = function(e){
-    //console.log("Add user input");
     var code = e.charCode ? e.charCode : (e.keyCode ? e.keyCode : e.which);
+    //console.log("manage user input: "+code);
     switch(code){
       case 13://enter
         this.executeCommand();
         break;
-      case 8://back
-        this.deleteCurrentInputLastKey();
-        break;
       case 38: //up
+        //e.preventDefault();
         this.fetchPreviousCommand("up");
         break;
       case 40: //down
+        //e.preventDefault();
         this.fetchPreviousCommand("down");
         break;
-      default://any other key, add it to current line
-        this.addKeyToCurrentInput(e, code);
     }
-  }
-
-  //add key to current input line
-  Terminal.prototype.addKeyToCurrentInput = function (e, code){
-    code_str = String.fromCharCode(code);
-    if(!e.shiftKey)
-      code_str = code_str.toLowerCase();
-    $(this.tag + " .command").last().text($(this.tag + " .command").last().text()+code_str);
-  }
-
-  //delete key from current input line
-  Terminal.prototype.deleteCurrentInputLastKey = function (){
-      $(this.tag + " .command").last().text($(this.tag + " .command").last().text().slice(0,-1));
   }
 
   //fetch previous/next command when user type up/down arrow keys
@@ -243,31 +207,28 @@ var PROGAMS = {
     //console.log("Fetch previous/next command "+dir);
     if(this.commands_list.length > 0 ){
       if(dir == "up"  && (this.last_command_retrieved == -1 || this.last_command_retrieved > 0)){
-
         if(this.last_command_retrieved == -1)
           this.last_command_retrieved = this.commands_list.length -1;
         else
           this.last_command_retrieved --;
         //console.log("Set previous command "+this.last_command_retrieved+"/"+this.commands_list.length);
-        $(this.tag+" .command").last().text(this.commands_list[this.last_command_retrieved]);
+        $(this.tag+" input[type=text].command").last().val(this.commands_list[this.last_command_retrieved]);
       }else if(dir == "down" && (this.last_command_retrieved != -1 && this.last_command_retrieved < (this.commands_list.length -1))){
         this.last_command_retrieved ++;
         //console.log("Set next command "+this.last_command_retrieved+"/"+this.commands_list.length);
-        $(this.tag+" .command").last().text(this.commands_list[this.last_command_retrieved]);
+        $(this.tag+" input[type=text].command").last().val(this.commands_list[this.last_command_retrieved]);
       }else{
         //console.log("Reached end of list");
-        $(this.tag+" .command").last().text("");
+        $(this.tag+" input[type=text].command").last().val("");
         this.last_command_retrieved = -1;
       }
-    }else {
-      //console.log("No command available");
     }
   }
 
   //execute command when user type enter
   Terminal.prototype.executeCommand = function(){
     //get last prompt
-    var command_raw = $(".command").last().text().trim().toLowerCase().replace(/[^\w\s]/gi, '');
+    var command_raw = $(".command").last().val().trim().toLowerCase().replace(/[^\w\s]/gi, '');
     //console.log("Execute command: "+command_raw);
 
     var command_arguments = command_raw.split(" ");
@@ -345,22 +306,12 @@ var PROGAMS = {
 
   Terminal.prototype.newPrompt = function(){
     //console.log("create_prompt");
-    this.removeCursor();
-    $(this.tag+" #terminal_lines").append("<div class=\"user_line\">  <span class=\"prompt\">"+this.getPrompt()+"</span><span class=\"command\"></span></div>");
-    this.setCursor();
-  }
-
-  /******************
-  CURSOR MANAGEMENT
-  ******************/
-  Terminal.prototype.removeCursor = function(){
-    //console.log("Remove cursor");
-    $(this.tag+" #cursor").remove();
-  }
-
-  Terminal.prototype.setCursor = function(){
-    //console.log("Add new cursor");
-    $(this.tag+" .user_line").last().append("<span id=\"cursor\">|</span>");
+    $(".command").prop('disabled', true);//disable previous inputs
+    $(this.tag+" #terminal_lines").append(`<div class="user_line">
+                                            <span class="prompt">`+this.getPrompt()+`</span>
+                                            <input type="text" class="command"></span>
+                                            </div>`);
+    $(".command").last().focus();
   }
 
   $.fn.setAsTerminal = function(tag = "#terminal", user=  "user", hostname="host", path="~", mode = "$", programs = {}) {
